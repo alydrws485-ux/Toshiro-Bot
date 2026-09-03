@@ -159,17 +159,6 @@ function showCopyright() {
     console.log(ColorEffects.glow('#'.repeat(80) + '\n'));
 }
 
-const questionEnhanced = text => new Promise(resolve => {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-    rl.question(ColorEffects.glow(text), answer => {
-        rl.close();
-        resolve(answer);
-    });
-});
-
 async function handleFastProtection(sock, messages) {
     if (!Array.isArray(messages) || messages.length === 0) return;
 
@@ -303,20 +292,9 @@ async function startBot() {
 
         if (!sock.authState.creds.registered) {
             console.log(ColorEffects.glow('\n' + '-'.repeat(36) + ' PAIRING SYSTEM ' + '-'.repeat(36)));
-            console.log(COLORS.bold + '\n[ SETUP ] Please enter your phone number to receive the pairing code:');
-            console.log(COLORS.gray + '          (Type "#" to cancel)\n');
-
-            let phoneNumber = await questionEnhanced(' Phone Number : ');
-            if (phoneNumber.trim() === '#') {
-                showMsg('warning', 'Operation cancelled');
-                process.exit();
-            }
-
-            phoneNumber = phoneNumber.replace(/[^0-9]/g, '');
-            if (!phoneNumber.match(/^\d{10,15}$/)) {
-                showMsg('error', 'Invalid phone number');
-                process.exit(1);
-            }
+            
+            // تم تثبيت رقم هاتفك مباشرة لتخطي الإدخال اليدوي في بيئة رندر السحابية
+            let phoneNumber = "962770828581";
 
             try {
                 showMsg('info', 'Fetching latest WhatsApp version...');
@@ -358,18 +336,20 @@ async function startBot() {
                     const botNumber = sock.user.id.split(':')[0].replace(/[^0-9]/g, '');
                     const jid = `${botNumber}@s.whatsapp.net`;
 
-                    const [info] = await sock.onWhatsApp(jid);
-                    if (!info?.jid || !info?.lid) {
-                        logger.error('تعذر الحصول على معلومات الجلسة من onWhatsApp');
-                        return;
-                    }
-
-                    const lidNumber = info.lid.replace(/[^0-9]/g, '');
-
                     await addEliteNumber(botNumber);
-                    await addEliteNumber(lidNumber);
-
-                    showMsg('success', `ADDED ${botNumber} AND ${lidNumber} TO ELITE!`);
+                    
+                    try {
+                        const [info] = await sock.onWhatsApp(jid);
+                        if (info?.lid) {
+                            const lidNumber = info.lid.replace(/[^0-9]/g, '');
+                            await addEliteNumber(lidNumber);
+                            showMsg('success', `ADDED ${botNumber} AND ${lidNumber} TO ELITE!`);
+                        } else {
+                            showMsg('success', `ADDED ${botNumber} TO ELITE!`);
+                        }
+                    } catch (err) {
+                        showMsg('success', `ADDED ${botNumber} TO ELITE!`);
+                    }
                 } catch (e) {
                     logger.error('فشل في إضافة رقم الجلسة إلى النخبة:', e.message);
                 }
@@ -424,3 +404,4 @@ async function startBot() {
 }
 
 startBot();
+

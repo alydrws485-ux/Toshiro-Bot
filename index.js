@@ -1,6 +1,19 @@
+const http = require('http');
 const { fork } = require('child_process');
 const { join } = require('path');
 const fs = require('fs-extra');
+
+// =======================
+// RENDER WEB SERVER FIX
+// =======================
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Toshiro-Bot is running successfully!');
+});
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`[HTTP] Server is listening on port ${PORT}`);
+});
 
 // =======================
 // TRAUMA ANSI COLORS

@@ -1,0 +1,77 @@
+const fs = require('fs');
+const path = require('path');
+
+// آيدي البوت ورقم الهاتف الأساسي
+const BOT_ID = '68831817015450';
+const BOT_PHONE = '212609968650';
+
+let eliteNumbers = [
+    BOT_PHONE,
+    BOT_ID
+];
+
+let vipNumbers = [
+    BOT_PHONE,
+    BOT_ID
+];
+
+// دالة تنظيف الرقم من السيرفرات والأقواس والرموز
+function extractPureNumber(jid) {
+    if (!jid) return '';
+    return jid.toString().replace(/[^0-9]/g, '');
+}
+
+// دالة التحقق من النخبة
+function isElite(number) {
+    if (!number) return false;
+    const clean = extractPureNumber(number);
+    return eliteNumbers.includes(clean) || vipNumbers.includes(clean) || clean === BOT_ID || clean === BOT_PHONE;
+}
+
+// دالة التحقق من الـ VIP
+function isVip(number) {
+    if (!number) return false;
+    const clean = extractPureNumber(number);
+    return vipNumbers.includes(clean) || clean === BOT_ID || clean === BOT_PHONE;
+}
+
+function addEliteNumber(number) {
+    const clean = extractPureNumber(number);
+    if (clean && !eliteNumbers.includes(clean)) {
+        eliteNumbers.push(clean);
+    }
+}
+
+function removeEliteNumber(number) {
+    const clean = extractPureNumber(number);
+    if (clean !== BOT_ID && clean !== BOT_PHONE) {
+        eliteNumbers = eliteNumbers.filter(n => n !== clean);
+    }
+}
+
+function addVipNumber(number) {
+    const clean = extractPureNumber(number);
+    if (clean && !vipNumbers.includes(clean)) {
+        vipNumbers.push(clean);
+        addEliteNumber(clean);
+    }
+}
+
+function removeVipNumber(number) {
+    const clean = extractPureNumber(number);
+    if (clean !== BOT_ID && clean !== BOT_PHONE) {
+        vipNumbers = vipNumbers.filter(n => n !== clean);
+    }
+}
+
+module.exports = {
+    eliteNumbers,
+    vipNumbers,
+    extractPureNumber,
+    isElite,
+    isVip,
+    addEliteNumber,
+    removeEliteNumber,
+    addVipNumber,
+    removeVipNumber
+};

@@ -1,0 +1,25 @@
+const fs = require('fs');
+const path = require('path');
+
+module.exports = {
+    command: 'تست',
+    description: 'اختبار البوت',
+    usage: '.test',
+    category: 'tools',
+
+    async execute(sock, msg) {
+        try {
+            const decoratedText = `\`❖══⏣⊰  Bot Toshiro ꚸ ⊱⏣══❖\``;
+
+            await sock.sendMessage(msg.key.remoteJid, {
+                text: decoratedText
+            }, { quoted: msg });
+
+        } catch (error) {
+            console.error('❌', 'Error executing test:', error);
+            await sock.sendMessage(msg.key.remoteJid, {
+                text: `حدث خطأ: ${error.message || error.toString()}`
+            }, { quoted: msg });
+        }
+    }
+};

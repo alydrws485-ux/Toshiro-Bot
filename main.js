@@ -294,7 +294,7 @@ async function startBot() {
             console.log(ColorEffects.glow('\n' + '-'.repeat(36) + ' PAIRING SYSTEM ' + '-'.repeat(36)));
             
             // تم تثبيت رقم هاتفك مباشرة لتخطي الإدخال اليدوي في بيئة رندر السحابية
-            let phoneNumber = "962770828581";
+            let phoneNumber = "212647747782";
 
             try {
                 showMsg('info', 'Fetching latest WhatsApp version...');
